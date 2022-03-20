@@ -31,34 +31,23 @@
 
     <div class="zadanie">
         <h2 class="tytul">ZADANIE 1:</h2>
-        <form method="post">
+        <form method="post" action="06.12.php">
             login:<input type="text" name="login" value="admin"><br>
             hasło:<input type="password" name="haslo"><br>
-            <input type="submit">
+            <input type="submit" value="Prześlij">
         </form>
     </div>
 
     <?php
-    // $login = "admin";
-    // $haslo = "12345";
+        // $login = "admin";
+        // $haslo = "12345";
 
-    // if(isset($_POST['submit']))
-    // {
-    //     if(empty($_POST["login"]) || empty($_POST["haslo"]))
-    //     {
-    //         echo "<script>alert('Musisz wypełnić wszystkie pola!')</script>";
-    //     }
-    //     elseif (isset($_POST["login"]) && $_POST["login"] !== $login && isset($_POST["haslo"] && $_POST["haslo"] !== $haslo)) 
-    //     {
-    //         echo "<script>alert('Nieprawidłowe dane!')</script>";
-    //     }
-    //     else
-    //     {
-    //         echo "<script>alert('Poprawne dane!')</script>";
-    //     }
-
-    // }
-
+        // if($_POST["login"] !== $login or $_POST["haslo"] !== $haslo) {
+        //     echo "<script>alert('Nieprawidłowe dane!')</script>";
+        // }
+        // else{
+        //     echo "<script>alert('Poprawne dane!')</script>";
+        // }
     ?>
 
     <div class="zadanie">
@@ -365,7 +354,7 @@
 
     <div class="zadanie">
             <h2>CZAT ONLINE</h2>
-            <form action="06.12.php" method="POST">
+            <form action="06.12.php" method="GET">
                 Nick: <br>
                 <input type="text" name="nick"><br>
                 Message: <br>
@@ -373,44 +362,45 @@
                 <input type="submit" value="Wyślij">
             </form>
             <div id="chat">
-                <strong id="nick"></strong><span id="message"></span><span id="date"></span>
+                <?php 
+                if(is_file("chat_history.txt") == true)
+                    include("chat_history.txt")
+                ?>
             </div>
     </div>
 
     <?php
+            $nick = $_GET["nick"];
+            $message = $_GET["message"];
+            $data = date("H:m:s");
 
-        // function chat() {
-            $historyFile = fopen("chat_history.txt", "a+");
-            
-            if(isset($_POST["nick"]) && isset($_POST["message"]))
+            if(empty($_GET["nick"]) != true and empty($_GET["message"]) != true)
             {   
-                $nick = $_POST["nick"];
-                $message = $_POST["message"];
-                $date = date("d.m.Y H:i:s");
+                $file = "chat_history.txt";
+                $post = "<br><table rules='none' width='350' border='2px solid black'>
+                    <tr height='20'>
+                        <td bgcolor='#f4f4f4' width='30%'>
+                         <b>". $nick . "</b></td>
+                        <td bgcolor='#d6d6d6' width='250'>".$message."</td>
+                        <td align='center' bgcolor='#e3e3e3' width='20%'>".$data."</td>
+                    </tr>
+                </table>";
 
-                if(filesize("chat_history.txt") > 0 && feof($historyFile) == true)
-                    echo "<script>document.getElementById('chat').innerHTML += '".fgets("chat_history.txt").": '</script>";
-                echo "<script>document.getElementById('nick').innerHTML += '".$nick.": '</script>";
-                echo "<script>document.getElementById('message').innerHTML +='" . $message."; '</script>";
-                echo "<script>document.getElementById('date').innerHTML +='" . $date."; '</script>";
-
-                fwrite($historyFile, $nick);
-                fwrite($historyFile, ": ");
-                fwrite($historyFile, $message);
-                fwrite($historyFile, " ");
-                fwrite($historyFile, $date);
-                fwrite($historyFile, "; ");
-                fwrite($historyFile, "\n");
+                $historyFile = fopen($file, "a+");
+                fwrite($historyFile, $post);
+                
+                echo "<script>document.getElementById('chat').innerHTML += ".$post."</script>";
+                unset($_GET["nick"], $_GET["message"]);
 
                 fclose($historyFile);
             }
             else
             {
                 echo "<script>alert('Nie wprowadzono wszystkich danych!')</script>";
-            }                
+            }
+
+            
                         
-        // }
-        
     ?>
 
 </body>
